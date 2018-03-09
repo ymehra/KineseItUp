@@ -17,13 +17,6 @@ def useable_Data(data, gt, timeStart, timeEnd):
     gt['index'] = gt['time']
     observedData = pd.merge(observedData,gt[['index','coding']])
     observedData.sort_index(inplace=True)
-    copy = observedData[['mean.vm','sd.vm','mean.ang','sd.ang','p625','dfreq','ratio.df']].copy(deep=True)
-    copy.loc[-1] = copy.loc[0]  # adding a row
-    copy.index = copy.index + 1  # shifting index
-    copy.sort_index(inplace=True)
-    copy.columns = 'last.' + copy.columns
-    observedData = pd.concat([observedData, copy], axis = 1)
-    observedData = observedData.drop(observedData.index[len(observedData)-1])
     return observedData
 
 def select_features_from_lasso(X, y, alpha):
@@ -59,8 +52,19 @@ def get_observed_data_for_subject(user, subject, files):
 def get_all_subjects(user, files):
     observedData = pd.DataFrame()
     for i in files:
-        observedData1 = get_observed_data_for_subject(user, 1, struct[str(i)])
-        observedData = pd.concat([observedData, observedData1])
-        
+        observedData1 = get_observed_data_for_subject(user, i, files[str(i)])
+        observedData = pd.concat([observedData, observedData1])    
     return observedData
 
+def write_observedData(observedData, user):
+    data = json.load(open('dir.json'))
+    observedData.to_csv(data[user]+'complete.csv')
+
+def get_complete(user):
+     data = pd.read_csv(load_Data(user, 'complete.csv'))
+     return data
+
+def update_complete(user):
+    files = load_struct()
+    observedData = get_all_subjects(user, files)
+    write_observedData(observedData, user)
