@@ -35,18 +35,21 @@ def load_struct():
 def get_observed_data_for_subject(user, subject, files):
     data = pd.read_csv(load_Data(user, files["AG"]), header=0)
     gt1 = pd.read_csv(load_Data(user, files["GT1"]), header=0)
-    gt2 = pd.read_csv(load_Data(user, files["GT2"]), header=0)
     type1 = files["GT1"][2]
-    type2 = files["GT2"][2]
     start1 = files["StartTime1"]
     end1 = files["EndTime1"]
-    start2 = files["StartTime2"]
-    end2 = files["EndTime2"]
     observedData = pd.DataFrame(useable_Data(data, gt1, start1, end1))
     observedData['type'] = type1 + '-' + str(subject)
-    observedData1 = pd.DataFrame(useable_Data(data, gt2, start2, end2))
-    observedData1['type'] = type2 + '-' + str(subject)
-    observedData = pd.concat([observedData, observedData1])
+
+    if("GT2" in files):
+        gt2 = pd.read_csv(load_Data(user, files["GT2"]), header=0)
+        type2 = files["GT2"][2]
+        start2 = files["StartTime2"]
+        end2 = files["EndTime2"]
+        observedData1 = pd.DataFrame(useable_Data(data, gt2, start2, end2))
+        observedData1['type'] = type2 + '-' + str(subject)
+        observedData = pd.concat([observedData, observedData1])
+        
     return observedData
 
 def get_all_subjects(user, files):
