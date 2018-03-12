@@ -3,6 +3,7 @@ import json
 import sklearn.svm as svm
 from sklearn.linear_model import Lasso, LassoCV
 from sklearn.feature_selection import SelectFromModel
+from sklearn import preprocessing
 import numpy as np
 from sklearn.neural_network import MLPClassifier
 
@@ -85,3 +86,31 @@ def update_complete(user):
     files = load_struct()
     observedData = get_all_subjects(user, files)
     write_observedData(observedData, user)
+
+def get_test_train(data, lag):
+    ## shuffle the data (for training and testing)
+    observedData = data.sample(frac = 1)
+
+    n = int(0.75 * len(observedData))
+
+    train = observedData[:n]
+    test = observedData[n:]
+    ## this might be an issue since there is ordinality and that makes things weird.  The later parts of this trial
+    ## were more likely to be sedentary.
+    if (lag == 0):
+        trainX = train[['mean.vm','sd.vm','mean.ang','sd.ang','p625','dfreq','ratio.df']]  
+        testX = test[['mean.vm','sd.vm','mean.ang','sd.ang','p625','dfreq','ratio.df']]
+
+    if (lag == 1): 
+        trainX = train[['mean.vm','sd.vm','mean.ang','sd.ang','p625','dfreq','ratio.df','last.mean.vm', 
+                    'last.sd.vm', 'last.mean.ang', 'last.sd.ang', 'last.p625', 'last.dfreq', 'last.ratio.df']]
+        testX = test[['mean.vm','sd.vm','mean.ang','sd.ang','p625','dfreq','ratio.df','last.mean.vm', 
+                'last.sd.vm', 'last.mean.ang', 'last.sd.ang', 'last.p625', 'last.dfreq', 'last.ratio.df']]
+   
+
+    trainY = train['coding']
+    testY = test['coding']
+    trainX = preprocessing.scale(trainX)
+    testX = preprocessing.scale(testX)
+
+    return trainX, trainY, testX, testY
