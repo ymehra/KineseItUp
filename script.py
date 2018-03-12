@@ -11,6 +11,7 @@ def load_Data(user, filename):
    return (data[user] + filename)
 
 def useable_Data(data, gt, timeStart, timeEnd):
+    data = get_lags(data, 3)
     data['start.time'] = pd.to_datetime(data['start.time'])
     observedData = data[(data['start.time'] >= timeStart) & (data['start.time'] <= timeEnd)]
     observedData['index'] = range(len(observedData))
@@ -18,6 +19,19 @@ def useable_Data(data, gt, timeStart, timeEnd):
     observedData = pd.merge(observedData,gt[['index','coding']])
     observedData.sort_index(inplace=True)
     return observedData
+
+def get_lags(data, lags):
+    prev_data = data[['mean.vm','sd.vm','mean.ang','sd.ang','p625','dfreq','ratio.df']]
+    for i in range(lags):
+        copy = prev_data.copy(deep=True)
+        copy.iloc[-1,:] = copy.iloc[0,:]
+        copy.index = copy.index + 1  # shifting index
+        copy.sort_index(inplace=True)
+        copy.columns = 'last.' + str(i+1) + "." + copy.columns
+        prev_data = copy
+        data = pd.concat([data, copy], axis = 1)
+        data = data.drop(data.index[len(data)-1])
+    return data
 
 def select_features_from_lasso(X, y, alpha):
     # fit lasso model and pass to select from model
