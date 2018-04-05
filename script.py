@@ -25,7 +25,7 @@ def get_lags(data, lags):
     prev_data = data[['mean.vm','sd.vm','mean.ang','sd.ang','p625','dfreq','ratio.df']]
     for i in range(lags):
         copy = prev_data.copy(deep=True)
-        copy.iloc[-1,:] = copy.iloc[0,:]
+        copy.loc[-1] = copy.loc[0]
         copy.index = copy.index + 1  # shifting index
         copy.sort_index(inplace=True)
         copy.columns = 'last.' + str(i+1) + "." + copy.columns
@@ -89,6 +89,7 @@ def update_complete(user):
 
 def get_test_train(data, lag):
     ## shuffle the data (for training and testing)
+    data = data.drop(['Unnamed: 0', 'Unnamed: 0.1', 'start.time', 'index', 'type'], axis = 1)
     observedData = data.sample(frac = 1)
 
     n = int(0.75 * len(observedData))
@@ -97,19 +98,20 @@ def get_test_train(data, lag):
     test = observedData[n:]
     ## this might be an issue since there is ordinality and that makes things weird.  The later parts of this trial
     ## were more likely to be sedentary.
+    trainY = train['coding']
+    testY = test['coding']
+  
     if (lag == 0):
         trainX = train[['mean.vm','sd.vm','mean.ang','sd.ang','p625','dfreq','ratio.df']]  
         testX = test[['mean.vm','sd.vm','mean.ang','sd.ang','p625','dfreq','ratio.df']]
 
-    if (lag == 1): 
-        trainX = train[['mean.vm','sd.vm','mean.ang','sd.ang','p625','dfreq','ratio.df','last.mean.vm', 
-                    'last.sd.vm', 'last.mean.ang', 'last.sd.ang', 'last.p625', 'last.dfreq', 'last.ratio.df']]
-        testX = test[['mean.vm','sd.vm','mean.ang','sd.ang','p625','dfreq','ratio.df','last.mean.vm', 
-                'last.sd.vm', 'last.mean.ang', 'last.sd.ang', 'last.p625', 'last.dfreq', 'last.ratio.df']]
+    if (lag == 1):
+        trainX = train[train.columns]
+        testX = test[train.columns]
+        trainX = trainX.drop('coding', axis = 1)
+        testX = testX.drop('coding', axis = 1)
    
 
-    trainY = train['coding']
-    testY = test['coding']
     trainX = preprocessing.scale(trainX)
     testX = preprocessing.scale(testX)
 
