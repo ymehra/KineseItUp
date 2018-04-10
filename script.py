@@ -12,7 +12,7 @@ def load_Data(user, filename):
    return (data[user] + filename)
 
 def useable_Data(data, gt, timeStart, timeEnd):
-    data = get_lags(data, 3)
+    # data = get_lags(data, 3)
     data['start.time'] = pd.to_datetime(data['start.time'])
     observedData = data[(data['start.time'] >= timeStart) & (data['start.time'] <= timeEnd)]
     observedData['index'] = range(len(observedData))
