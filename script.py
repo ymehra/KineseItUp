@@ -17,7 +17,7 @@ def useable_Data(data, gt, timeStart, timeEnd):
     observedData = data[(data['start.time'] >= timeStart) & (data['start.time'] <= timeEnd)]
     observedData['index'] = range(len(observedData))
     gt['index'] = gt['time']
-    observedData = pd.merge(observedData,gt[['index','coding']])
+    observedData = pd.merge(observedData,gt[['index','activity','coding']])
     observedData.sort_index(inplace=True)
     return observedData
 
@@ -98,8 +98,8 @@ def get_test_train(data, lag):
     test = observedData[n:]
     ## this might be an issue since there is ordinality and that makes things weird.  The later parts of this trial
     ## were more likely to be sedentary.
-    trainY = train['coding']
-    testY = test['coding']
+    trainY = train['activity']
+    testY = test['activity']
   
     if (lag == 0):
         trainX = train[['mean.vm','sd.vm','mean.ang','sd.ang','p625','dfreq','ratio.df']]  
@@ -110,6 +110,8 @@ def get_test_train(data, lag):
         testX = test[train.columns]
         trainX = trainX.drop('coding', axis = 1)
         testX = testX.drop('coding', axis = 1)
+        trainX = trainX.drop('activity', axis = 1)
+        testX = testX.drop('activity', axis = 1)
    
 
     trainX = preprocessing.scale(trainX)
