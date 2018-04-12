@@ -18,7 +18,6 @@ def load_Data(user, filename):
 ## Returns a single DF with the snipet of data that matches the timeStart and timeEnd
 ## Along with the ground truth encodings for each second
 def useable_Data(data, gt, timeStart, timeEnd):
-    # data = get_lags(data, 3)
     data['start.time'] = pd.to_datetime(data['start.time'])
     observedData = data[(data['start.time'] >= timeStart) & (data['start.time'] <= timeEnd)]
     observedData['index'] = range(len(observedData))
@@ -82,15 +81,11 @@ def get_observed_data_for_subject(user, subject, files):
         observedData = pd.concat([observedData, observedData1])
         
     return observedData
-## Not completed yet - is supposed to the same as get_observed_data_for_subject but for different files.
-def get_new_data(user, subject, files):
-    data = pd.read_csv(load_Data(user, files["AGG"]), header=0)
 
 def get_all_subjects(user, files):
     observedData = pd.DataFrame()
     for i in files:
-        observedData1 = get_new_data(user, i, files[str(i)])
-        # observedData1 = get_observed_data_for_subject(user, i, files[str(i)])
+        observedData1 = get_observed_data_for_subject(user, i, files[str(i)])
         observedData = pd.concat([observedData, observedData1])    
     return observedData
 

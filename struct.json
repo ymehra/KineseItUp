@@ -7,7 +7,7 @@
             "GT2": "GTL01-02.csv",
             "StartTime2": "2017-10-03 18:46:00",
             "EndTime2": "2017-10-03 20:46:00",
-            "AGG": "AG_AM01WRT (2017-10-02)RAW.csv"
+            "WIDE": "WIDE-01-01.csv"
          },
     "3" : {
             "AG": "AG03-01.csv",
@@ -17,7 +17,7 @@
             "GT2": "GTH03-02.csv",
             "StartTime2": "2017-07-27 13:01:29",
             "EndTime2": "2017-07-27 15:00:29",
-            "AGG": "AG_AM03WRT (2017-07-24)RAW.csv"
+            "WIDE": "WIDE-03-01.csv"
          },
     "4": {
             "AG": "AG04-01.csv",
@@ -27,14 +27,14 @@
             "GT2": "GTA04-02.csv",
             "StartTime2": "2017-09-17 14:15:51",
             "EndTime2": "2017-09-17 16:15:51",
-            "AGG": "AG_AM04WRT (2017-09-11)RAW.csv"
+            "WIDE": "WIDE-04-01.csv"
          },
     "5" : {
             "AG": "AG05-01.csv",
             "GT1": "GTL05-02.csv",
             "StartTime1": "2017-09-19 19:38:53",
             "EndTime1": "2017-09-19 21:39:53",
-            "AGG": "AG_AM05WRT (2017-09-19)RAW.csv"
+            "WIDE": "WIDE-05-01.csv"
          },
     "6" : {
             "AG": "AG06-01.csv",
@@ -44,7 +44,7 @@
             "GT2": "GTA06-02.csv",
             "StartTime2": "2017-08-01 08:08:59",
             "EndTime2": "2017-10-03 10:09:59",
-            "AGG": "AG_AM06WRT (2017-07-28)RAW.csv"
+            "WIDE": "WIDE-06-01.csv"
          },
     "7" : {
             "AG": "AG07-01.csv",
@@ -54,7 +54,7 @@
             "GT2": "GTE07-02.csv",
             "StartTime2": "2017-08-02 11:30:04",
             "EndTime2": "2017-08-02 13:30:04",
-            "AGG": "AG_AM07WRT (2017-07-31)RAW.csv"
+            "WIDE": "WIDE-07-01.csv"
          },
     "8" : {
             "AG": "AG08-01.csv",
@@ -64,27 +64,27 @@
             "GT2": "GTA08-02.csv",
             "StartTime2": "2017-08-07 09:30:10",
             "EndTime2": "2017-08-07 11:30:10",
-            "AGG": "AG_AM08WRT (2017-08-01)RAW.csv"
+            "WIDE": "WIDE-08-01.csv"
          },
     "9" : {
             "AG": "AG09-01.csv",
             "GT1": "GTW09-01.csv",
             "StartTime1": "2017-08-10 13:19:05",
             "EndTime1": "2017-08-10 15:08:20",
-            "AGG": "AG_AM09WRT (2017-08-08)RAW.csv"
+            "WIDE": "WIDE-09-01.csv"
          },
     "13": {
             "AG": "AG13-01.csv",
             "GT1": "GTW13-01.csv",
             "StartTime1": "2017-09-20 10:37:00",
             "EndTime1": "2017-09-20 12:37:00",
-            "AGG": "AG_AM13WRT (2017-09-18)RAW.csv"
+            "WIDE": "WIDE-13-01.csv"
          },
     "14": {
             "AG": "AG14-01.csv",
             "GT1": "GTE14-02.csv",
             "StartTime1": "2017-09-23 09:13:00",
             "EndTime1": "2017-09-23 11:13:00",
-            "AGG": "AG_AM14WRT (2017-09-19)RAW.csv"
+            "WIDE": "WIDE-14-01.csv"
          }
 }
