@@ -7,10 +7,16 @@ from sklearn import preprocessing
 import numpy as np
 from sklearn.neural_network import MLPClassifier
 
+## This function will open a JSON file with each of our team members directory info
+## Requires person name as strong and filename as string
+## Returns that persons filepath
 def load_Data(user, filename):
    data = json.load(open('dir.json'))
    return (data[user] + filename)
 
+## Takes the raw dataframe, it's groundtruth, starttime and endtime
+## Returns a single DF with the snipet of data that matches the timeStart and timeEnd
+## Along with the ground truth encodings for each second
 def useable_Data(data, gt, timeStart, timeEnd):
     # data = get_lags(data, 3)
     data['start.time'] = pd.to_datetime(data['start.time'])
@@ -21,6 +27,8 @@ def useable_Data(data, gt, timeStart, timeEnd):
     observedData.sort_index(inplace=True)
     return observedData
 
+## Takes a DF and an integer value for the number of lag variables wanted.
+## Returns a similar DF with extra columns for the number of lags you requested. 
 def get_lags(data, lags):
     prev_data = data[['mean.vm','sd.vm','mean.ang','sd.ang','p625','dfreq','ratio.df']]
     for i in range(lags):
@@ -34,6 +42,8 @@ def get_lags(data, lags):
         data = data.drop(data.index[len(data)-1])
     return data
 
+## Simple Feature selection function.
+## Returns list of selected features.
 def select_features_from_lasso(X, y, alpha):
     # fit lasso model and pass to select from model
     lasso = LassoCV().fit(X, y)
@@ -43,11 +53,17 @@ def select_features_from_lasso(X, y, alpha):
     X_new = model.transform(X)
     return X.columns[model.get_support()]
 
+## Simple Function that loads a JSON file struct.json 
+## returns JSON structure.
 def load_struct():
     data = json.load(open('struct.json'))
     return data
 
+## This function is a mid step function using the struct.json file. 
+## Gets the info from that file. Subject is an integer. See get_all_subjects for more info.
+## Returns a DF with that persons data, gt, gt2 (if there is one)
 def get_observed_data_for_subject(user, subject, files):
+    
     data = pd.read_csv(load_Data(user, files["AG"]), header=0)
     gt1 = pd.read_csv(load_Data(user, files["GT1"]), header=0)
     type1 = files["GT1"][2]
@@ -66,11 +82,15 @@ def get_observed_data_for_subject(user, subject, files):
         observedData = pd.concat([observedData, observedData1])
         
     return observedData
+## Not completed yet - is supposed to the same as get_observed_data_for_subject but for different files.
+def get_new_data(user, subject, files):
+    data = pd.read_csv(load_Data(user, files["AGG"]), header=0)
 
 def get_all_subjects(user, files):
     observedData = pd.DataFrame()
     for i in files:
-        observedData1 = get_observed_data_for_subject(user, i, files[str(i)])
+        observedData1 = get_new_data(user, i, files[str(i)])
+        # observedData1 = get_observed_data_for_subject(user, i, files[str(i)])
         observedData = pd.concat([observedData, observedData1])    
     return observedData
 
