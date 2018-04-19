@@ -24,6 +24,7 @@ def useable_Data(data, gt, timeStart, timeEnd):
     gt['index'] = gt['time']
     observedData = pd.merge(observedData,gt[['index','activity','coding']])
     observedData.sort_index(inplace=True)
+    observedData = observedData[observedData['activity'] != 'Private / Not Coded']
     return observedData
 
 ## Takes a DF and an integer value for the number of lag variables wanted.
