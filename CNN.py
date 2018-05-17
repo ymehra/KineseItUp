@@ -5,10 +5,12 @@ import tensorflow as tf
 
 # data = pd.read_csv(r"C:\Users\yashm\Google Drive\Data Capstone_\Project Folder\PreWideData\cnn_wide.csv")
 data = pd.read_csv(sc.load_Data("AGG-Yash", "cnn_wide.csv"))
-features = data[data.columns[0:240]]
 
 labels = data['activity']
-K = len(data['activity']. unique())
+K = len(data['activity'].unique())
+features = data[data.columns[1:-2]]
+
+print(features.shape, len(labels), K)
 
 
 graph = tf.Graph()
@@ -20,8 +22,8 @@ with tf.Session(graph=graph) as sess:
     tf.global_variables_initializer().run()
     print(sess.run(x, feed_dict={train_features: features}))
 
-num_epochs = 100
-learning_rate = 1e-2
+num_epochs = 200
+learning_rate = 0.08
 
 graph = tf.Graph()
 with graph.as_default():
@@ -43,9 +45,9 @@ with graph.as_default():
                              padding="same", 
                              data_format="channels_last",
                              activation=tf.nn.relu)
-    # Max Pooling 1 (reduces samples from 80 --> 40)
+    # Max Pooling 1 (reduces samples from 80 --> 31)
     pool1 = tf.layers.max_pooling1d(inputs=conv1,
-                                    pool_size=2, 
+                                    pool_size=40, 
                                     strides=2,
                                     data_format="channels_last")
     
@@ -56,14 +58,14 @@ with graph.as_default():
                              padding="same", 
                              data_format="channels_last",
                              activation=tf.nn.relu)
-    # Max Pooling 2 (reduces samples from 40 --> 20)
+    # Max Pooling 2 (reduces samples from 39 --> 17)
     pool2 = tf.layers.max_pooling1d(inputs=conv2,
-                                    pool_size=2, 
+                                    pool_size=3, 
                                     strides=2,
                                     data_format="channels_last")
     
     # Flatten the Pooled Data
-    pool2_flat = tf.reshape(pool2, [-1, 20 * 16])
+    pool2_flat = tf.reshape(pool2, [-1, 10 * 16])
     
     # Dense Layer (try adding dropout?)
     dense = tf.layers.dense(inputs=pool2_flat, units=128, activation=tf.nn.relu)
@@ -90,6 +92,8 @@ with graph.as_default():
     
 with tf.Session(graph=graph) as sess:
     tf.global_variables_initializer().run()
+    i = 0
+    prev = 0
     for _ in range(num_epochs):
         feed_dict = {
             train_features: features,
@@ -98,4 +102,6 @@ with tf.Session(graph=graph) as sess:
         _, _, acc = sess.run(
             [optimizer, loss, accuracy], 
             feed_dict=feed_dict)
-        print(acc)
+        print("Epoch: ", i, " Acc: ", acc*100, " Change: ", (acc-prev)*100)
+        i = i + 1
+        prev = acc
