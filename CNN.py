@@ -3,8 +3,8 @@ import numpy as np
 import script as sc
 import tensorflow as tf
 
-data = pd.read_csv(r"C:\Users\yashm\Google Drive\Data Capstone_\Project Folder\PreWideData\cnn_wide.csv")
-
+# data = pd.read_csv(r"C:\Users\yashm\Google Drive\Data Capstone_\Project Folder\PreWideData\cnn_wide.csv")
+data = pd.read_csv(sc.load_Data("AGG-Yash", "cnn_wide.csv"))
 features = data[data.columns[0:240]]
 
 labels = data['activity']
