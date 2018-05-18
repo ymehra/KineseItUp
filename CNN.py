@@ -3,17 +3,20 @@ import numpy as np
 import script as sc
 import tensorflow as tf
 
-def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window2, stride2, outshape):
+def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window2, stride2):
    graph = tf.Graph()
    with graph.as_default():
       train_features = tf.placeholder(tf.float32, shape=(None, 240))
       x = tf.reshape(train_features, [-1, 80, 3])
       
-   with tf.Session(graph=graph) as sess:
-      tf.global_variables_initializer().run()
-      print(sess.run(x, feed_dict={train_features: features}))
+   # with tf.Session(graph=graph) as sess:
+   #    tf.global_variables_initializer().run()
+   #    print(sess.run(x, feed_dict={train_features: features}))
 
    num_epochs = epochs
+
+   best_epoch = 0
+   best_acc = 0
 
    graph = tf.Graph()
    with graph.as_default():
@@ -55,6 +58,7 @@ def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window
                                        data_format="channels_last")
       
       # Flatten the Pooled Data
+      outshape = int(((((80 - window1)/stride1) + 1 - window2)/stride2) + 1)
       pool2_flat = tf.reshape(pool2, [-1, outshape * 16])
       
       # Dense Layer (try adding dropout?)
@@ -93,12 +97,17 @@ def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window
                [optimizer, loss, accuracy], 
                feed_dict=feed_dict)
          print("Epoch: ", i, " Acc: ", acc*100, " Change: ", (acc-prev)*100)
+         if(acc > best_acc):
+            best_acc = prev
+            best_epoch = i
          i = i + 1
          prev = acc
+   
+   return best_epoch, best_acc
 
 def main():
-   # data = pd.read_csv(r"C:\Users\yashm\Google Drive\Data Capstone_\Project Folder\PreWideData\cnn_wide.csv")
-   data = pd.read_csv(sc.load_Data("AGG-Yash", "cnn_wide.csv"))
+   data = pd.read_csv(r"C:\Users\yashm\Google Drive\Data Capstone_\Project Folder\PreWideData\cnn_wide.csv")
+   # data = pd.read_csv(sc.load_Data("AGG-Yash", "cnn_wide.csv"))
 
    labels = data['activity']
    K = len(data['activity'].unique())
@@ -112,8 +121,13 @@ def main():
    stride1 = 2
    window2 = 3
    stride2 = 2
-   outshape = 10
 
-   run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window2, stride2, outshape)
+   with open("test.csv","a") as f:
+      for i in range(3, 15):
+         learning_rate = i/100
+         print(learning_rate)
+         best_epoch, best_acc = run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window2, stride2)
+         out_string = str(learning_rate) + "," + str(best_epoch) + "," + str(best_acc) + "\n"
+         f.write(out_string)
 
 main()
