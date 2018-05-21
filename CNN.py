@@ -37,7 +37,7 @@ def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window
                               kernel_size=8, 
                               padding="same", 
                               data_format="channels_last",
-                              activation=tf.nn.relu)
+                              activation=tf.nn.tanh)
       # Max Pooling 1 (reduces samples from 80 --> 31)
       pool1 = tf.layers.max_pooling1d(inputs=conv1,
                                        pool_size=window1, 
@@ -50,7 +50,7 @@ def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window
                               kernel_size=8, 
                               padding="same", 
                               data_format="channels_last",
-                              activation=tf.nn.relu)
+                              activation=tf.nn.tanh)
       # Max Pooling 2 (reduces samples from 39 --> 17)
       pool2 = tf.layers.max_pooling1d(inputs=conv2,
                                        pool_size=window2, 
@@ -117,14 +117,14 @@ def main():
    print(features.shape, len(labels), K)
 
    epochs = 200
-   learning_rate = 0.01
+   learning_rate = 0.05
    window1 = 40
    stride1 = 2
    window2 = 3
    stride2 = 2
 
-   with open("test.csv","a") as f:
-      for i in range(3, 15):
+   with open("tuning.csv","a") as f:
+      for i in range(5, 15):
          learning_rate = i/100
          print(learning_rate)
          best_epoch, best_acc = run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window2, stride2)
