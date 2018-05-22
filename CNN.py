@@ -3,7 +3,7 @@ import numpy as np
 import script as sc
 import tensorflow as tf
 
-def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window2, stride2):
+def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window2, stride2, func):
    graph = tf.Graph()
    with graph.as_default():
       train_features = tf.placeholder(tf.float32, shape=(None, 240))
@@ -37,7 +37,7 @@ def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window
                               kernel_size=8, 
                               padding="same", 
                               data_format="channels_last",
-                              activation=tf.nn.tanh)
+                              activation=func)
       # Max Pooling 1 (reduces samples from 80 --> 31)
       pool1 = tf.layers.max_pooling1d(inputs=conv1,
                                        pool_size=window1, 
@@ -50,7 +50,7 @@ def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window
                               kernel_size=8, 
                               padding="same", 
                               data_format="channels_last",
-                              activation=tf.nn.tanh)
+                              activation=func)
       # Max Pooling 2 (reduces samples from 39 --> 17)
       pool2 = tf.layers.max_pooling1d(inputs=conv2,
                                        pool_size=window2, 
@@ -62,7 +62,7 @@ def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window
       pool2_flat = tf.reshape(pool2, [-1, outshape * 16])
       
       # Dense Layer (try adding dropout?)
-      dense = tf.layers.dense(inputs=pool2_flat, units=128, activation=tf.nn.tanh)
+      dense = tf.layers.dense(inputs=pool2_flat, units=128, activation=func)
       
       # Logits Layer
       logits = tf.layers.dense(inputs=dense, units=K)
@@ -106,8 +106,8 @@ def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window
    return best_epoch, best_acc
 
 def main():
-   # data = pd.read_csv("cnn_wide.csv")
-   data = pd.read_csv(r"C:\Users\yashm\Google Drive\Data Capstone_\Project Folder\PreWideData\cnn_wide.csv")
+   data = pd.read_csv("cnn_wide.csv")
+   # data = pd.read_csv(r"C:\Users\yashm\Google Drive\Data Capstone_\Project Folder\PreWideData\cnn_wide.csv")
    # data = pd.read_csv(sc.load_Data("AGG-Yash", "cnn_wide.csv"))
 
    labels = data['activity']
@@ -116,6 +116,8 @@ def main():
 
    print(features.shape, len(labels), K)
 
+   activation_functions = [tf.nn.tanh, tf.nn.relu, tf.nn.dropout, tf.nn.sigmoid, tf.nn.bias_add]
+   string_funcs = ["tanh", "relu", "dropout", "sigmoid", "bias_add"]
    epochs = 200
    learning_rate = 0.05
    window1 = 40
@@ -123,11 +125,16 @@ def main():
    window2 = 3
    stride2 = 2
 
-   with open("tanh.csv","a") as f:
+   for j in range(0, len(activation_functions)):
       for i in range(5, 15):
-         learning_rate = i/100
-         print(learning_rate)
-         best_epoch, best_acc = run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window2, stride2)
-         out_string = str(learning_rate) + "," + str(best_epoch) + "," + str(best_acc) + "\n"
-         f.write(out_string)
+         with open("output.csv.csv","a") as f:
+            learning_rate = i/100
+            print(learning_rate)
+            best_epoch, best_acc = run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window2, stride2, activation_functions[j])
+            out_string = string_funcs[j] + "," + str(learning_rate)
+            out_string = out_string + "," + str(window1) + "," + str(stride1) 
+            out_string = out_string + "," + str(window2) + "," + str(stride2)
+            out_string = out_string + "," + str(best_epoch) + "," + str(best_acc) + "\n"
+            f.write(out_string)
+
 main()
