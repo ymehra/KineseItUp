@@ -106,8 +106,8 @@ def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window
    return best_epoch, best_acc
 
 def main():
-   data = pd.read_csv("cnn_wide.csv")
-
+   # data = pd.read_csv("cnn_wide.csv")
+   data = pd.read_csv(r"C:\Users\yashm\Google Drive\Data Capstone_\Project Folder\PreWideData\cnn_wide.csv")
    # data = pd.read_csv(sc.load_Data("AGG-Yash", "cnn_wide.csv"))
 
    labels = data['activity']
@@ -124,11 +124,10 @@ def main():
    stride2 = 2
 
    with open("tuning.csv","a") as f:
-      for i in range(5, 15):
+      for i in range(8, 11):
          learning_rate = i/100
          print(learning_rate)
          best_epoch, best_acc = run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window2, stride2)
          out_string = str(learning_rate) + "," + str(best_epoch) + "," + str(best_acc) + "\n"
          f.write(out_string)
-
 main()
