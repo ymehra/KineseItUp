@@ -116,8 +116,8 @@ def main():
 
    print(features.shape, len(labels), K)
 
-   activation_functions = [tf.nn.tanh, tf.nn.relu, tf.nn.dropout, tf.nn.sigmoid, tf.nn.bias_add]
-   string_funcs = ["tanh", "relu", "dropout", "sigmoid", "bias_add"]
+   activation_functions = [tf.nn.tanh, tf.nn.relu, tf.nn.sigmoid, tf.nn.bias_add]
+   string_funcs = ["tanh", "relu", "sigmoid", "bias_add"]
    epochs = 200
    learning_rate = 0.05
    window1 = 40
@@ -126,7 +126,7 @@ def main():
    stride2 = 2
 
    for j in range(0, len(activation_functions)):
-      for i in range(5, 15):
+      for i in range(8, 16):
          with open("output.csv.csv","a") as f:
             learning_rate = i/100
             print(learning_rate)
