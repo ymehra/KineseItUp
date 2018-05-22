@@ -62,7 +62,7 @@ def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window
       pool2_flat = tf.reshape(pool2, [-1, outshape * 16])
       
       # Dense Layer (try adding dropout?)
-      dense = tf.layers.dense(inputs=pool2_flat, units=128, activation=tf.nn.relu)
+      dense = tf.layers.dense(inputs=pool2_flat, units=128, activation=tf.nn.tanh)
       
       # Logits Layer
       logits = tf.layers.dense(inputs=dense, units=K)
@@ -123,7 +123,7 @@ def main():
    window2 = 3
    stride2 = 2
 
-   with open("tuning.csv","a") as f:
+   with open("tanh.csv","a") as f:
       for i in range(5, 15):
          learning_rate = i/100
          print(learning_rate)
