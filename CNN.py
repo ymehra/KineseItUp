@@ -120,14 +120,15 @@ def main():
    string_funcs = ["tanh", "relu", "selu"]
    epochs = 200
    learning_rate = 0.05
-   window1 = 30
-   stride1 = 5
+   window1 = 35
+   stride1 = 15
    window2 = 2
    stride2 = 1
 
    for j in range(0, len(activation_functions)):
       for i in range(8, 16):
-         with open("output.csv","a") as f:
+         with open("outputy
+         .csv","a") as f:
             learning_rate = i/100
             print(learning_rate)
             best_epoch, best_acc = run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window2, stride2, activation_functions[j])
