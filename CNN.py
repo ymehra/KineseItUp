@@ -106,9 +106,9 @@ def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window
    return best_epoch, best_acc
 
 def main():
-   # data = pd.read_csv("cnn_wide.csv")
+   data = pd.read_csv("cnn_wide.csv")
    # data = pd.read_csv(r"C:\Users\yashm\Google Drive\Data Capstone_\Project Folder\PreWideData\cnn_wide.csv")
-   data = pd.read_csv(sc.load_Data("AGG-Yash", "cnn_wide.csv"))
+   # data = pd.read_csv(sc.load_Data("AGG-Yash", "cnn_wide.csv"))
    data[np.arange(240,480).astype(str)] = data[np.arange(240).astype(str)].shift(-1)
    data[['time','activity','labels']] = data[['time','activity','labels']].shift(-1)
    data = data.drop(data.index[len(data) - 1])
