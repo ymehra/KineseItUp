@@ -117,24 +117,30 @@ def main():
    print(features.shape, len(labels), K)
 
    activation_functions = [tf.nn.tanh, tf.nn.relu, tf.nn.selu]
-   string_funcs = ["tanh", "relu", "selu"]
+   string_funcs = ["tanh", "selu"]
    epochs = 200
    learning_rate = 0.05
-   window1 = 35
-   stride1 = 15
-   window2 = 2
-   stride2 = 1
+   windows1 = [40, 30, 35]
+   strides1 = [2, 5, 15]
+   windows2 = [3, 2, 2]
+   strides2 = [2, 1, 1]
 
-   for j in range(0, len(activation_functions)):
-      for i in range(8, 16):
-         with open("output.csv","a") as f:
-            learning_rate = i/100
-            print(learning_rate)
-            best_epoch, best_acc = run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window2, stride2, activation_functions[j])
-            out_string = string_funcs[j] + "," + str(learning_rate)
-            out_string = out_string + "," + str(window1) + "," + str(stride1) 
-            out_string = out_string + "," + str(window2) + "," + str(stride2)
-            out_string = out_string + "," + str(best_epoch) + "," + str(best_acc) + "\n"
-            f.write(out_string)
+   for k in range(0, len(windows1)):
+      window1 = windows1[k]
+      stride1 = strides1[k]
+      window2 = windows2[k]
+      stride2 = strides2[k]
+
+      for j in range(0, len(activation_functions)):
+         for i in range(8, 16):
+            with open("output.csv","a") as f:
+               learning_rate = i/100
+               print(learning_rate)
+               best_epoch, best_acc = run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window2, stride2, activation_functions[j])
+               out_string = string_funcs[j] + "," + str(learning_rate)
+               out_string = out_string + "," + str(window1) + "," + str(stride1) 
+               out_string = out_string + "," + str(window2) + "," + str(stride2)
+               out_string = out_string + "," + str(best_epoch) + "," + str(best_acc) + "\n"
+               f.write(out_string)
 
 main()
