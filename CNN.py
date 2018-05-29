@@ -6,8 +6,8 @@ import tensorflow as tf
 def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window2, stride2, func):
    graph = tf.Graph()
    with graph.as_default():
-      train_features = tf.placeholder(tf.float32, shape=(None, 240))
-      x = tf.reshape(train_features, [-1, 80, 3])
+      train_features = tf.placeholder(tf.float32, shape=(None, 480))
+      x = tf.reshape(train_features, [-1, 160, 3])
       
    # with tf.Session(graph=graph) as sess:
    #    tf.global_variables_initializer().run()
@@ -21,11 +21,11 @@ def run_CNN(features, labels, K, epochs, learning_rate, window1, stride1, window
    graph = tf.Graph()
    with graph.as_default():
       # Placeholders for the actual data.
-      train_features = tf.placeholder(tf.float32, shape=(None, 240))
+      train_features = tf.placeholder(tf.float32, shape=(None, 480))
       train_labels = tf.placeholder(tf.int32, shape=(None, ))
       
       # Reshaping the data
-      x = tf.reshape(train_features, [-1, 80, 3])
+      x = tf.reshape(train_features, [-1, 160, 3])
       y = tf.one_hot(
          train_labels,
          depth=K
@@ -109,6 +109,8 @@ def main():
    data = pd.read_csv("cnn_wide.csv")
    # data = pd.read_csv(r"C:\Users\yashm\Google Drive\Data Capstone_\Project Folder\PreWideData\cnn_wide.csv")
    # data = pd.read_csv(sc.load_Data("AGG-Yash", "cnn_wide.csv"))
+   data[np.arange(240,480).astype(str)] = data[np.arange(240).astype(str)].shift(-1)
+   data[['time','activity','labels']] = data[['time','activity','labels']].shift(-1)
 
    labels = data['activity']
    K = len(data['activity'].unique())
@@ -116,14 +118,14 @@ def main():
 
    print(features.shape, len(labels), K)
 
-   activation_functions = [tf.nn.tanh, tf.nn.relu, tf.nn.selu]
+   activation_functions = [tf.nn.tanh, tf.nn.selu]
    string_funcs = ["tanh", "selu"]
    epochs = 200
    learning_rate = 0.05
-   windows1 = [40, 30, 35]
-   strides1 = [2, 5, 15]
-   windows2 = [3, 2, 2]
-   strides2 = [2, 1, 1]
+   windows1 = [40, 30, 60, 60]
+   strides1 = [2, 5, 10, 20]
+   windows2 = [3, 2, 3, 2]
+   strides2 = [2, 1, 2, 1]
 
    for k in range(0, len(windows1)):
       window1 = windows1[k]
@@ -132,7 +134,7 @@ def main():
       stride2 = strides2[k]
 
       for j in range(0, len(activation_functions)):
-         for i in range(8, 16):
+         for i in range(8, 15):
             with open("output.csv","a") as f:
                learning_rate = i/100
                print(learning_rate)
