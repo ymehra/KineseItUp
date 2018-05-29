@@ -115,7 +115,7 @@ def main():
 
    labels = data['activity']
    K = len(data['activity'].unique())
-   features = data[data.columns[1:-2]]
+   features = data[np.arange(480).astype(str)]
 
    print(features.shape, len(labels), K)
 
