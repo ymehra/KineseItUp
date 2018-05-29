@@ -111,6 +111,7 @@ def main():
    # data = pd.read_csv(sc.load_Data("AGG-Yash", "cnn_wide.csv"))
    data[np.arange(240,480).astype(str)] = data[np.arange(240).astype(str)].shift(-1)
    data[['time','activity','labels']] = data[['time','activity','labels']].shift(-1)
+   data = data.drop(data.index[len(data) - 1])
 
    labels = data['activity']
    K = len(data['activity'].unique())
