@@ -11,6 +11,7 @@ import pandas as pd
 import numpy as np
 import json
 import sklearn
+import pickle
 # from sklearn.neural_network import MLPClassifier
 import script as sc
 # from sklearn.metrics import confusion_matrix
@@ -19,6 +20,42 @@ import script as sc
 # >>> py run___ user model_want data_file pickle_output_name 
 
 # helper_functions
+def save_pkl(classifier, filename):
+    with open(filename, 'wb') as f:
+        pickle.dump(classifier, f)
+        print("Classifier saved as " + filename)
+
+
+def svm(trainX, trainY, file):
+    clf = sklearn.svm.SVC(cache_size=7000)
+    clf.fit(trainX, trainY)
+    save_pkl(clf, file)
+
+
+def neural_net(trainX, trainY, file):
+    n_net = sklearn.neural_network.MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(2000, 1000),
+                                                 random_state=1, verbose=True)
+    n_net.fit(trainX, trainY)
+    save_pkl(n_net, file)
+
+
+def random_forest(trainX, trainY, file):
+    rf = sklearn.ensemble.RandomForestClassifier(max_depth=5, random_state=0)
+    rf.fit(trainX, trainY)
+    save_pkl(rf, file)
+
+
+def knn(trainX, trainY, file):
+    knn = sklearn.neighbors.KNeighborsClassifier(n_neighbors=15)
+    knn.fit(trainX, trainY)
+    save_pkl(knn, file)
+
+
+def gradient_boost(trainX, trainY, file):
+    grad_boost = sklearn.ensemble.GradientBoostingClassifier(n_estimators=200, max_depth=7)
+    grad_boost.fit(trainX, trainY)
+    save_pkl(grad_boost, file)
+
 
 def main(argv):
 
@@ -66,7 +103,6 @@ def main(argv):
    
    if model == "neural_network":
       raise NotImplementedError
-
 
    
 if __name__ == "__main__":
