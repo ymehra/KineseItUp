@@ -5,6 +5,7 @@
 ## 
 
 # import the necessary files
+import getopt
 import sys
 import pandas as pd
 import numpy as np
@@ -18,3 +19,37 @@ import script as sc
 # >>> py run___ user model_want data_file pickle_output_name 
 
 # helper_functions
+
+def main(argv):
+
+   input_file = "Not found"
+   output_file = "Not found"
+   user = "Not found"
+   model = "Not found"
+
+   try:
+      opts, args = getopt.getopt(argv,"hi:m:u:o:",["ifile=","mfile=","ufile=", "ofile="])
+   except getopt.GetoptError:
+      print ('run_models.py -i <inputfile> -m <model name> -u <user> -o <outputfile>')
+      sys.exit(2)
+   for opt, arg in opts:
+      if opt == '-h':
+         print ('run_models.py -i <inputfile> -m <model name> -u <user> -o <outputfile>')
+         sys.exit()
+      elif opt in ("-i", "--ifile"):
+         input_file = arg
+      elif opt in ("-m", "--kvalue"):
+         model = arg
+      elif opt in ("-u", "--kvalue"):
+         user = arg
+      elif opt in ("-o", "--kvalue"):
+         output_file = arg
+
+   print ('input file name given :', input_file)
+   print ('model given :', model)
+   print ('user given :', user)
+   print ('output file name given :', output_file)
+   
+if __name__ == "__main__":
+   main(sys.argv[1:])
+
