@@ -11,7 +11,7 @@ from sklearn.neural_network import MLPClassifier
 ## Requires person name as strong and filename as string
 ## Returns that persons filepath
 def load_Data(user, filename):
-   data = json.load(open('dir.json'))
+   data = json.load(open('../dir.json'))
    return (data[user] + filename)
 
 ## Takes the raw dataframe, it's groundtruth, starttime and endtime
@@ -56,7 +56,13 @@ def select_features_from_lasso(X, y, alpha):
 ## Simple Function that loads a JSON file struct.json 
 ## returns JSON structure.
 def load_struct():
-    data = json.load(open('struct.json'))
+    data = json.load(open('../struct.json'))
+    return data
+
+## Loads a JSON file. This file is the same as struct.json,
+## but contains information for all of the videos 
+def load_full_struct():
+    data = json.load(open('../fullStruct.json'))
     return data
 
 ## This function is a mid step function using the struct.json file. 
@@ -91,17 +97,33 @@ def get_all_subjects(user, files):
     return observedData
 
 def write_observedData(observedData, user):
-    data = json.load(open('dir.json'))
+    data = json.load(open('../dir.json'))
     observedData.to_csv(data[user]+'complete.csv')
 
 def get_complete(user):
      data = pd.read_csv(load_Data(user, 'complete.csv'))
      return data
 
+def write_staudenmeyer_observedData(observedData, user):
+    data = json.load(open('../dir.json'))
+    observedData.to_csv(data[user]+'staudenmeyer_complete.csv')
+
+## Reads in the dataset made by update_staudenmeyer_complete
+def get_staudenmeyer_complete(user):
+     data = pd.read_csv(load_Data(user, 'staudenmeyer_complete.csv'))
+     return data
+
 def update_complete(user):
     files = load_struct()
     observedData = get_all_subjects(user, files)
     write_observedData(observedData, user)
+    
+## Builds a dataset containing the predictions
+## made by the Staudenmeyer random forest method
+def update_staudenmeyer_complete(user):
+    files = load_full_struct()
+    observedData = get_all_subjects(user, files)
+    write_staudenmeyer_observedData(observedData, user)
 
 def get_test_train(data, lag):
     ## shuffle the data (for training and testing)
