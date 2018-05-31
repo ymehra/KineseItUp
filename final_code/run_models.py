@@ -81,7 +81,7 @@ def main(argv):
    model = model.lower()
    
    ## cross validation by person (leave-one-out)
-   data = pd.DataFrame(sc.get_complete(user))
+   data = pd.DataFrame(sc.get_complete(user,input_file))
    data_with_predictions = pd.DataFrame()
 
    ## define variables
