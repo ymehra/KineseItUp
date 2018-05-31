@@ -12,12 +12,7 @@ import numpy as np
 import json
 import sklearn
 import pickle
-# from sklearn.neural_network import MLPClassifier
 import script as sc
-# from sklearn.metrics import confusion_matrix
-# from sklearn.metrics import f1_score
-
-# >>> py run___ user model_want data_file pickle_output_name 
 
 # helper_functions
 def save_pkl(classifier, filename):
@@ -26,36 +21,32 @@ def save_pkl(classifier, filename):
         print("Classifier saved as " + filename)
 
 
-def svm(trainX, trainY, file):
+def svm(trainX, trainY):
     clf = sklearn.svm.SVC(cache_size=7000)
     clf.fit(trainX, trainY)
-    save_pkl(clf, file)
+    return clf
 
 
-def neural_net(trainX, trainY, file):
+def neural_net(trainX, trainY):
     n_net = sklearn.neural_network.MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(2000, 1000),
                                                  random_state=1, verbose=True)
     n_net.fit(trainX, trainY)
-    save_pkl(n_net, file)
+    return n_net
 
+def random_forest(trainX, trainY):
+   rf = sklearn.ensemble.RandomForestClassifier(max_depth=5, random_state=0)
+   rf.fit(trainX, trainY)
+   return grad_boost
 
-def random_forest(trainX, trainY, file):
-    rf = sklearn.ensemble.RandomForestClassifier(max_depth=5, random_state=0)
-    rf.fit(trainX, trainY)
-    save_pkl(rf, file)
-
-
-def knn(trainX, trainY, file):
+def knn(trainX, trainY):
     knn = sklearn.neighbors.KNeighborsClassifier(n_neighbors=15)
     knn.fit(trainX, trainY)
-    save_pkl(knn, file)
+    return knn
 
-
-def gradient_boost(trainX, trainY, file):
+def gradient_boost(trainX, trainY):
     grad_boost = sklearn.ensemble.GradientBoostingClassifier(n_estimators=200, max_depth=7)
     grad_boost.fit(trainX, trainY)
-    save_pkl(grad_boost, file)
-
+    return grad_boost
 
 def main(argv):
 
@@ -89,22 +80,55 @@ def main(argv):
 
    model = model.lower()
    
-   if model == "gradient_boosting":
-      raise NotImplementedError
-   
-   elif model == "svm":
-      raise NotImplementedError
-   
-   if model == "knn":
-      raise NotImplementedError
-   
-   if model == "rf":
-      raise NotImplementedError
-   
-   if model == "neural_network":
-      raise NotImplementedError
+   ## cross validation by person (leave-one-out)
+   data = pd.DataFrame(sc.get_complete(user))
+   data_with_predictions = pd.DataFrame()
 
-   
+   ## define variables
+   x_vars = ['mean.vm','sd.vm','mean.ang','sd.ang','p625','dfreq','ratio.df']
+   y_var = 'coding'
+
+   for person in np.unique(data['type']):
+      ## split training and testing by one person
+      train = data[data['type'] != person]
+      test = data[data['type'] == person]
+      
+      ## subset x and y variables
+      train_x = train[x_vars]
+      train_y = train[y_var]
+      test_x = test[x_vars]
+      test_y = test[y_var]
+
+      classifier = None
+
+      if model == "gradient_boosting":
+         classifier = gradient_boosting(train_x,train_y)
+      elif model == "svm":
+         classifier = svm(train_x,train_y)
+      elif model == "knn":
+         classifier = knn(train_x,train_y)
+      elif model == "rf":
+         classifier = random_forest(train_x,train_y)
+      elif model == "neural_network":
+         classifier = neural_net(train_x,train_y)
+      else:
+         exit(1) 
+
+      ## use classifier to predict
+      pred = classifier.predict(test_x)
+      test_x['predicted'] = pred
+
+      ## append the data set with predictions for that person
+      data_with_predictions = data_with_predictions.append(test_x)
+
+   ## output the classifer and data_set with predictions
+   save_pkl(classifier, output_file)
+   ## write the data to a csv
+   data_with_predictions.to_csv('new_'+input_file,index = False)
+   ## print the accuracy
+   correct = data_with_predictions['coding'] == data_with_predictions['predicted']
+   print (sum(correct) / len(correct))
+
 if __name__ == "__main__":
    main(sys.argv[1:])
 
