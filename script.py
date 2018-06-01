@@ -100,8 +100,8 @@ def write_observedData(observedData, user):
     data = json.load(open('../dir.json'))
     observedData.to_csv(data[user]+'complete.csv')
 
-def get_complete(user):
-     data = pd.read_csv(load_Data(user, 'complete.csv'))
+def get_complete(user,filename):
+     data = pd.read_csv(load_Data(user, filename))
      return data
 
 def write_staudenmeyer_observedData(observedData, user):

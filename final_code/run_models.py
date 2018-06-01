@@ -4,13 +4,21 @@
 ## This file will be run from command line to create a user-specified model
 ## 
 
+# preliminary things to get the script.py file
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
+
 # import the necessary files
 import getopt
-import sys
 import pandas as pd
 import numpy as np
 import json
 import sklearn
+import sklearn.ensemble
+import sklearn.neural_network
+import sklearn.neighbors
 import pickle
 import script as sc
 
@@ -20,12 +28,14 @@ def save_pkl(classifier, filename):
         pickle.dump(classifier, f)
         print("Classifier saved as " + filename)
 
-
+## functions for the various models -- these take in the training set
+## and return the fitted model
 def svm(trainX, trainY):
-    clf = sklearn.svm.SVC(cache_size=7000)
+    clf = sklearn.svm.SVC(max_iter = 10)
+    print("clf made")
     clf.fit(trainX, trainY)
+    print("fit complete")
     return clf
-
 
 def neural_net(trainX, trainY):
     n_net = sklearn.neural_network.MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(2000, 1000),
@@ -36,7 +46,7 @@ def neural_net(trainX, trainY):
 def random_forest(trainX, trainY):
    rf = sklearn.ensemble.RandomForestClassifier(max_depth=5, random_state=0)
    rf.fit(trainX, trainY)
-   return grad_boost
+   return rf
 
 def knn(trainX, trainY):
     knn = sklearn.neighbors.KNeighborsClassifier(n_neighbors=15)
@@ -49,7 +59,6 @@ def gradient_boost(trainX, trainY):
     return grad_boost
 
 def main(argv):
-
    input_file = "Not found"
    output_file = "Not found"
    user = "Not found"
@@ -81,7 +90,7 @@ def main(argv):
    model = model.lower()
    
    ## cross validation by person (leave-one-out)
-   data = pd.DataFrame(sc.get_complete(user))
+   data = pd.DataFrame(sc.get_complete(user,input_file))
    data_with_predictions = pd.DataFrame()
 
    ## define variables
@@ -89,9 +98,10 @@ def main(argv):
    y_var = 'coding'
 
    for person in np.unique(data['type']):
+      print (person)
       ## split training and testing by one person
-      train = data[data['type'] != person]
-      test = data[data['type'] == person]
+      train = data[data['type'] != person].copy(deep=True)
+      test = data[data['type'] == person].copy(deep=True)
       
       ## subset x and y variables
       train_x = train[x_vars]
@@ -100,11 +110,14 @@ def main(argv):
       test_y = test[y_var]
 
       classifier = None
+      print ("here")
 
       if model == "gradient_boosting":
-         classifier = gradient_boosting(train_x,train_y)
+         classifier = gradient_boost(train_x,train_y)
       elif model == "svm":
+         print ("inside")
          classifier = svm(train_x,train_y)
+         print("Finished SVM class")
       elif model == "knn":
          classifier = knn(train_x,train_y)
       elif model == "rf":
@@ -112,22 +125,28 @@ def main(argv):
       elif model == "neural_network":
          classifier = neural_net(train_x,train_y)
       else:
-         exit(1) 
-
+         print ("why?")
+         exit(1)
+      print("out of condtional")
       ## use classifier to predict
       pred = classifier.predict(test_x)
-      test_x['predicted'] = pred
+      test['predicted'] = pred
+      print ("outside")
+      ## print the accuracy of current person
+      corr = test['predicted'] == test['coding']
+      print (str(person + " accuracy = "),sum(corr) / len(corr))
 
       ## append the data set with predictions for that person
-      data_with_predictions = data_with_predictions.append(test_x)
+      data_with_predictions = data_with_predictions.append(test)
+      print ("bottom")
 
    ## output the classifer and data_set with predictions
    save_pkl(classifier, output_file)
    ## write the data to a csv
-   data_with_predictions.to_csv('new_'+input_file,index = False)
+   data_with_predictions.to_csv(str(model+'_new_')+input_file,index = False)
    ## print the accuracy
    correct = data_with_predictions['coding'] == data_with_predictions['predicted']
-   print (sum(correct) / len(correct))
+   print ("Overall Model Accuracy = ",sum(correct) / len(correct))
 
 if __name__ == "__main__":
    main(sys.argv[1:])
