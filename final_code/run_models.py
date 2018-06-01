@@ -31,8 +31,10 @@ def save_pkl(classifier, filename):
 ## functions for the various models -- these take in the training set
 ## and return the fitted model
 def svm(trainX, trainY):
-    clf = sklearn.svm.SVC(cache_size=7000)
+    clf = sklearn.svm.SVC(max_iter = 10)
+    print("clf made")
     clf.fit(trainX, trainY)
+    print("fit complete")
     return clf
 
 def neural_net(trainX, trainY):
@@ -96,22 +98,26 @@ def main(argv):
    y_var = 'coding'
 
    for person in np.unique(data['type']):
+      print (person)
       ## split training and testing by one person
       train = data[data['type'] != person].copy(deep=True)
       test = data[data['type'] == person].copy(deep=True)
       
       ## subset x and y variables
-      train_x = train[x_vars].copy(deep=True)
-      train_y = train[y_var].copy(deep=True)
-      test_x = test[x_vars].copy(deep=True)
-      test_y = test[y_var].copy(deep=True)
+      train_x = train[x_vars]
+      train_y = train[y_var]
+      test_x = test[x_vars]
+      test_y = test[y_var]
 
       classifier = None
+      print ("here")
 
       if model == "gradient_boosting":
          classifier = gradient_boost(train_x,train_y)
       elif model == "svm":
+         print ("inside")
          classifier = svm(train_x,train_y)
+         print("Finished SVM class")
       elif model == "knn":
          classifier = knn(train_x,train_y)
       elif model == "rf":
@@ -119,18 +125,20 @@ def main(argv):
       elif model == "neural_network":
          classifier = neural_net(train_x,train_y)
       else:
-         exit(1) 
-
+         print ("why?")
+         exit(1)
+      print("out of condtional")
       ## use classifier to predict
       pred = classifier.predict(test_x)
       test['predicted'] = pred
-
+      print ("outside")
       ## print the accuracy of current person
       corr = test['predicted'] == test['coding']
       print (str(person + " accuracy = "),sum(corr) / len(corr))
 
       ## append the data set with predictions for that person
       data_with_predictions = data_with_predictions.append(test)
+      print ("bottom")
 
    ## output the classifer and data_set with predictions
    save_pkl(classifier, output_file)
