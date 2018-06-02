@@ -1,17 +1,30 @@
+## Authors: Yash Mehra, Gus Moir, Andrew Rose, Hans Schumann
+## Version: June 2018
+## 
+## This file will be run from command line to evaluate the generated models
+## 
+
+# preliminary things to get the script.py file
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
+
 # import the necessary files
 import getopt
 import sys
 import pandas as pd
 import numpy as np
 import json
-from sklearn.metrics import ConfusionMatrix
+from sklearn.metrics import confusion_matrix
 import pickle
 import script as sc
 
 
 def print_confusion_matrix(classifier, data):
-    x_vars = ['mean.vm', 'sd.vm', 'mean.ang', 'sd.ang', 'p625', 'dfreq', 'ratio.df']
-    predicted = classifier.predict(data)
+    # x_vars = ['mean.vm', 'sd.vm', 'mean.ang', 'sd.ang', 'p625', 'dfreq', 'ratio.df']
+    # predicted = classifier.predict(data)
+    print (confusion_matrix(data['coding'],data['predicted']))
 
 
 def main(argv):
@@ -48,6 +61,7 @@ def main(argv):
         classifier = pickle.load(pkl)
 
     print_confusion_matrix(classifier, data)
+    print ("Accuracy = ",sum(data['coding'] == data['predicted']) / len(data['coding']))
 
 
 if __name__ == "__main__":
