@@ -96,9 +96,9 @@ def get_all_subjects(user, files):
         observedData = pd.concat([observedData, observedData1])    
     return observedData
 
-def write_observedData(observedData, user):
+def write_observedData(observedData, user, filename):
     data = json.load(open('../dir.json'))
-    observedData.to_csv(data[user]+'complete.csv')
+    observedData.to_csv(data[user] + filename)
 
 def get_complete(user,filename):
      data = pd.read_csv(load_Data(user, filename))
@@ -113,10 +113,10 @@ def get_staudenmeyer_complete(user):
      data = pd.read_csv(load_Data(user, 'staudenmeyer_complete.csv'))
      return data
 
-def update_complete(user):
+def update_complete(user, filename):
     files = load_struct()
     observedData = get_all_subjects(user, files)
-    write_observedData(observedData, user)
+    write_observedData(observedData, user, filename)
     
 ## Builds a dataset containing the predictions
 ## made by the Staudenmeyer random forest method
