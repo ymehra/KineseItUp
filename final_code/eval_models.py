@@ -21,21 +21,88 @@ import pickle
 import script as sc
 
 
-def print_confusion_matrix(classifier, data):
-    # x_vars = ['mean.vm', 'sd.vm', 'mean.ang', 'sd.ang', 'p625', 'dfreq', 'ratio.df']
-    # predicted = classifier.predict(data)
-    print (confusion_matrix(data['coding'],data['predicted']))
+# def print_confusion_matrix(classifier, data):
+#     # x_vars = ['mean.vm', 'sd.vm', 'mean.ang', 'sd.ang', 'p625', 'dfreq', 'ratio.df']
+#     # predicted = classifier.predict(data)
+#     print (confusion_matrix(data['coding'],data['predicted']))
 
+def print_confusion_matrix(data, domain):
+    domain = domain.lower()
+    if domain == "overall":
+        conf_mat = confusion_matrix(data['coding'],data['predicted'])
+        print ("\tOverall Confusion Matrix")
+        print ("\t|  Predicted    | Total")
+        print (str("Actual  | " + str(conf_mat[0][0]) + " | " + str(conf_mat[0][1]) + " | " + str(conf_mat[0][0] + conf_mat[0][1]) ))
+        print (str("\t| " + str(conf_mat[1][0]) + " | " + str(conf_mat[1][1]) + " | " + str(conf_mat[1][0] + conf_mat[1][1]) ))
+        print (str("Total   | " + str(conf_mat[0][0] + conf_mat[1][0]) + " | " + str(conf_mat[0][1] + conf_mat[1][1]) + " | " + str(len(data)) ))
+        print ()
+        print ("Accuracy = ",sum(data['coding'] == data['predicted']) / len(data['coding']))
+
+    elif domain == "e":
+        data_temp = data[data['type'].str.contains('E')]
+        conf_mat = confusion_matrix(data_temp['coding'],data_temp['predicted'])
+        print ("\tErrands Confusion Matrix")
+        print ("\t|  Predicted    | Total")
+        print (str("Actual  | " + str(conf_mat[0][0]) + " | " + str(conf_mat[0][1]) + " | " + str(conf_mat[0][0] + conf_mat[0][1]) ))
+        print (str("\t| " + str(conf_mat[1][0]) + " | " + str(conf_mat[1][1]) + " | " + str(conf_mat[1][0] + conf_mat[1][1]) ))
+        print (str("Total   | " + str(conf_mat[0][0] + conf_mat[1][0]) + " | " + str(conf_mat[0][1] + conf_mat[1][1]) + " | " + str(len(data_temp)) ))
+        print ()
+        print ("Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
+
+    elif domain == "a":
+        data_temp = data[data['type'].str.contains('A')]
+        conf_mat = confusion_matrix(data_temp['coding'],data_temp['predicted'])
+        print ("\tActive Confusion Matrix")
+        print ("\t|  Predicted    | Total")
+        print (str("Actual  | " + str(conf_mat[0][0]) + " | " + str(conf_mat[0][1]) + " | " + str(conf_mat[0][0] + conf_mat[0][1]) ))
+        print (str("\t| " + str(conf_mat[1][0]) + " | " + str(conf_mat[1][1]) + " | " + str(conf_mat[1][0] + conf_mat[1][1]) ))
+        print (str("Total   | " + str(conf_mat[0][0] + conf_mat[1][0]) + " | " + str(conf_mat[0][1] + conf_mat[1][1]) + " | " + str(len(data_temp)) ))
+        print ()
+        print ("Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
+
+    elif domain == "l":
+        data_temp = data[data['type'].str.contains('L')]
+        conf_mat = confusion_matrix(data_temp['coding'],data_temp['predicted'])
+        print ("\tLeisure Confusion Matrix")
+        print ("\t|  Predicted    | Total")
+        print (str("Actual  | " + str(conf_mat[0][0]) + " | " + str(conf_mat[0][1]) + " | " + str(conf_mat[0][0] + conf_mat[0][1]) ))
+        print (str("\t| " + str(conf_mat[1][0]) + " | " + str(conf_mat[1][1]) + " | " + str(conf_mat[1][0] + conf_mat[1][1]) ))
+        print (str("Total   | " + str(conf_mat[0][0] + conf_mat[1][0]) + " | " + str(conf_mat[0][1] + conf_mat[1][1]) + " | " + str(len(data_temp)) ))
+        print ()
+        print ("Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
+
+    elif domain == "w":
+        data_temp = data[data['type'].str.contains('W')]
+        conf_mat = confusion_matrix(data_temp['coding'],data_temp['predicted'])
+        print ("\tWork Confusion Matrix")
+        print ("\t|  Predicted    | Total")
+        print (str("Actual  | " + str(conf_mat[0][0]) + " | " + str(conf_mat[0][1]) + " | " + str(conf_mat[0][0] + conf_mat[0][1]) ))
+        print (str("\t| " + str(conf_mat[1][0]) + " | " + str(conf_mat[1][1]) + " | " + str(conf_mat[1][0] + conf_mat[1][1]) ))
+        print (str("Total   | " + str(conf_mat[0][0] + conf_mat[1][0]) + " | " + str(conf_mat[0][1] + conf_mat[1][1]) + " | " + str(len(data_temp)) ))
+        print ()
+        print ("Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
+
+    elif domain == "h":
+        data_temp = data[data['type'].str.contains('H')]
+        conf_mat = confusion_matrix(data_temp['coding'],data_temp['predicted'])
+        print ("\tHousework Confusion Matrix")
+        print ("\t|  Predicted    | Total")
+        print (str("Actual  | " + str(conf_mat[0][0]) + " | " + str(conf_mat[0][1]) + " | " + str(conf_mat[0][0] + conf_mat[0][1]) ))
+        print (str("\t| " + str(conf_mat[1][0]) + " | " + str(conf_mat[1][1]) + " | " + str(conf_mat[1][0] + conf_mat[1][1]) ))
+        print (str("Total   | " + str(conf_mat[0][0] + conf_mat[1][0]) + " | " + str(conf_mat[0][1] + conf_mat[1][1]) + " | " + str(len(data_temp)) ))
+        print ()
+        print ("Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
+
+        
 
 def main(argv):
     input_file = "Not found"
-    model = "Not found"
     output_file = "Not found"
 
     try:
-        opts, args = getopt.getopt(argv, "hi:m:u:o:", ["ifile=", "mfile=", "ufile=", "ofile="])
+        opts, args = getopt.getopt(argv, "hi:o:", ["ifile=", "mfile=", "ufile=", "ofile="])
     except getopt.GetoptError:
-        print('run_models.py -i <inputfile> -m <model name> -u <user> -o <outputfile>')
+        print('run_models.py -i <inputfile> -o <outputfile>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
@@ -43,25 +110,30 @@ def main(argv):
             sys.exit()
         elif opt in ("-i", "--ifile"):
             input_file = arg
-        elif opt in ("-m", "--model"):
-            model = arg
-        elif opt in ("-u", "--user"):
-            user = arg
         elif opt in ("-o", "--output"):
             output_file = arg
 
     print('input file name given :', input_file)
-    print('model given :', model)
-    print('user given :', user)
     print('output file name given :', output_file)
 
     data = pd.read_csv(input_file)
 
-    with open(model, 'rb') as pkl:
-        classifier = pickle.load(pkl)
+    # with open(model, 'rb') as pkl:
+    #     classifier = pickle.load(pkl)
 
-    print_confusion_matrix(classifier, data)
-    print ("Accuracy = ",sum(data['coding'] == data['predicted']) / len(data['coding']))
+    # print_confusion_matrix(classifier, data)
+    print_confusion_matrix(data, "overall")
+    print ()
+    print_confusion_matrix(data, "a")
+    print ()
+    print_confusion_matrix(data, "e")
+    print ()
+    print_confusion_matrix(data, "w")
+    print ()
+    print_confusion_matrix(data, "l")
+    print ()
+    print_confusion_matrix(data, "h")
+    
 
 
 if __name__ == "__main__":
