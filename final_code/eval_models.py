@@ -19,7 +19,10 @@ import json
 from sklearn.metrics import confusion_matrix
 import pickle
 import script as sc
-
+import matplotlib.pyplot as plt
+from matplotlib.legend import Legend
+import matplotlib.axes as ax
+from scipy.stats import linregress
 
 # def print_confusion_matrix(classifier, data):
 #     # x_vars = ['mean.vm', 'sd.vm', 'mean.ang', 'sd.ang', 'p625', 'dfreq', 'ratio.df']
@@ -105,7 +108,45 @@ def print_confusion_matrix(data, domain):
         print ("Housework Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
         print ()
 
-        
+def create_plot(data,file):
+    ## creating the person data
+    person_data = pd.DataFrame(columns = ['id','category','actual_sed','pred_sed','total'])
+    for person in np.unique(data['type']):
+        temp = data[data['type'] == person]
+        person_data.loc[len(person_data)] = [person,person[:1],np.sum(temp['coding'] == 'sedentary'),np.sum(temp['predicted'] == 'sedentary'),len(temp)]
+
+    person_data['Pred_sed_pct'] = (person_data['pred_sed'] / person_data['total']).astype(float)
+    person_data['Actual_sed_pct'] = (person_data['actual_sed'] / person_data['total']).astype(float)
+    
+    x = np.arange(2)
+    y1 = x
+    reg = linregress(person_data['Pred_sed_pct'],person_data['Actual_sed_pct'])
+    y2 = reg[0]*x + reg[1]
+    colors = np.array(['b','b','b','g','g','g','r','r','r','c','c','c','c','m','m','m'])
+
+    a = person_data[person_data['category'] == 'A']
+    e = person_data[person_data['category'] == 'E']
+    l = person_data[person_data['category'] == 'L']
+    w = person_data[person_data['category'] == 'W']
+    h = person_data[person_data['category'] == 'H']
+
+    plt.figure(figsize = (12,8))
+    plt.plot(x,y1,'--',color = 'black')
+    plt.plot(x,y2,'-',color = 'orange')
+    plt.scatter(a['Pred_sed_pct'],a['Actual_sed_pct'],color = 'm')
+    plt.scatter(e['Pred_sed_pct'],e['Actual_sed_pct'],color = 'c')
+    plt.scatter(l['Pred_sed_pct'],l['Actual_sed_pct'],color = 'g')
+    plt.scatter(w['Pred_sed_pct'],w['Actual_sed_pct'],color = 'b')
+    plt.scatter(h['Pred_sed_pct'],h['Actual_sed_pct'],color = 'r')
+    plt.xlabel('Predicted Sedentary Proportion')
+    plt.ylabel('Actual Sedentary Proportion')
+    plt.title("Model Accuacy By Domain",fontsize = 16)
+    plt.legend(['Perfect Fit','Regression','A','E','L','W','H'])
+    plt.xlim([0,1])
+    plt.ylim([0,1])
+    plt.text(x = 0.8, y = 0.1,s = ("r = " + str(round(reg[2],2))),fontsize = 16)
+
+    plt.savefig(file)
 
 def main(argv):
     input_file = "Not found"
@@ -141,9 +182,11 @@ def main(argv):
     print_confusion_matrix(data, "l")
     print_confusion_matrix(data, "h")
     
-    ## output to text file
-    f = open(output_file,'w')
-    f.write(print_confusion_matrix(data,"overall"))
+    ## output graphs
+    create_plot(data,output_file)
+
+    # f = open(output_file,'w')
+    # f.write(print_confusion_matrix(data,"overall"))
 
 
 if __name__ == "__main__":
