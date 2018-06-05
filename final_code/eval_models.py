@@ -108,7 +108,8 @@ def print_confusion_matrix(data, domain):
         print ("Housework Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
         print ()
 
-def create_plot(data,file):
+def create_plot(data,file,model):
+    model = model.replace("_"," ")
     ## creating the person data
     person_data = pd.DataFrame(columns = ['id','category','actual_sed','pred_sed','total'])
     for person in np.unique(data['type']):
@@ -140,7 +141,7 @@ def create_plot(data,file):
     plt.scatter(h['Pred_sed_pct'],h['Actual_sed_pct'],color = 'r')
     plt.xlabel('Predicted Sedentary Proportion')
     plt.ylabel('Actual Sedentary Proportion')
-    plt.title("Model Accuacy By Domain",fontsize = 16)
+    plt.title(str(model + " Model Accuacy By Domain"),fontsize = 16)
     plt.legend(['Perfect Fit','Regression','A','E','L','W','H'])
     plt.xlim([0,1])
     plt.ylim([0,1])
@@ -153,21 +154,25 @@ def main(argv):
     output_file = "Not found"
 
     try:
-        opts, args = getopt.getopt(argv, "hi:o:", ["ifile=", "mfile=", "ufile=", "ofile="])
+        opts, args = getopt.getopt(argv, "hi:o:m:", ["ifile=", "mfile=", "ofile="])
     except getopt.GetoptError:
-        print('run_models.py -i <inputfile> -o <outputfile>')
+        print('run_models.py -i <inputfile> -o <outputfile> -m <modelname>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('eval_models.py -i <inputfile> -m <model name> -u <user> -o <outputfile>')
+            print('eval_models.py -i <inputfile> -m <model name> -o <outputfile>')
             sys.exit()
         elif opt in ("-i", "--ifile"):
             input_file = arg
         elif opt in ("-o", "--output"):
             output_file = arg
+        elif opt in ("-m", "--kvalue"):
+            model = arg
+
 
     print('input file name given :', input_file)
     print('output file name given :', output_file)
+    print ('model given :', model)
 
     data = pd.read_csv(input_file)
 
@@ -183,7 +188,7 @@ def main(argv):
     print_confusion_matrix(data, "h")
     
     ## output graphs
-    create_plot(data,output_file)
+    create_plot(data,output_file,model)
 
     # f = open(output_file,'w')
     # f.write(print_confusion_matrix(data,"overall"))
