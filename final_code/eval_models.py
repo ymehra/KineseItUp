@@ -37,7 +37,8 @@ def print_confusion_matrix(data, domain):
         print (str("        sed   | " + str(conf_mat[1][0]) + " | " + str(conf_mat[1][1]) + " | " + str(conf_mat[1][0] + conf_mat[1][1]) ))
         print (str("        Total | " + str(conf_mat[0][0] + conf_mat[1][0]) + " | " + str(conf_mat[0][1] + conf_mat[1][1]) + " | " + str(len(data)) ))
         print ()
-        print ("Accuracy = ",sum(data['coding'] == data['predicted']) / len(data['coding']))
+        print ("Overall Accuracy = ",sum(data['coding'] == data['predicted']) / len(data['coding']))
+        print ()
 
     elif domain == "e":
         data_temp = data[data['type'].str.contains('E')]
@@ -49,7 +50,8 @@ def print_confusion_matrix(data, domain):
         print (str("        sed   | " + str(conf_mat[1][0]) + " | " + str(conf_mat[1][1]) + " | " + str(conf_mat[1][0] + conf_mat[1][1]) ))
         print (str("        Total | " + str(conf_mat[0][0] + conf_mat[1][0]) + " | " + str(conf_mat[0][1] + conf_mat[1][1]) + " | " + str(len(data_temp)) ))
         print ()
-        print ("Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
+        print ("Errands Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
+        print ()
 
     elif domain == "a":
         data_temp = data[data['type'].str.contains('A')]
@@ -61,7 +63,8 @@ def print_confusion_matrix(data, domain):
         print (str("        sed   | " + str(conf_mat[1][0]) + " | " + str(conf_mat[1][1]) + " | " + str(conf_mat[1][0] + conf_mat[1][1]) ))
         print (str("        Total | " + str(conf_mat[0][0] + conf_mat[1][0]) + " | " + str(conf_mat[0][1] + conf_mat[1][1]) + " | " + str(len(data_temp)) ))
         print ()
-        print ("Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
+        print ("Active Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
+        print ()
 
     elif domain == "l":
         data_temp = data[data['type'].str.contains('L')]
@@ -73,7 +76,8 @@ def print_confusion_matrix(data, domain):
         print (str("        sed   | " + str(conf_mat[1][0]) + " | " + str(conf_mat[1][1]) + " | " + str(conf_mat[1][0] + conf_mat[1][1]) ))
         print (str("        Total | " + str(conf_mat[0][0] + conf_mat[1][0]) + " | " + str(conf_mat[0][1] + conf_mat[1][1]) + " | " + str(len(data_temp)) ))
         print ()
-        print ("Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
+        print ("Leisure Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
+        print ()
 
     elif domain == "w":
         data_temp = data[data['type'].str.contains('W')]
@@ -85,7 +89,8 @@ def print_confusion_matrix(data, domain):
         print (str("        sed   | " + str(conf_mat[1][0]) + " | " + str(conf_mat[1][1]) + " | " + str(conf_mat[1][0] + conf_mat[1][1]) ))
         print (str("        Total | " + str(conf_mat[0][0] + conf_mat[1][0]) + " | " + str(conf_mat[0][1] + conf_mat[1][1]) + " | " + str(len(data_temp)) ))
         print ()
-        print ("Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
+        print ("Work Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
+        print ()
 
     elif domain == "h":
         data_temp = data[data['type'].str.contains('H')]
@@ -97,7 +102,8 @@ def print_confusion_matrix(data, domain):
         print (str("        sed   | " + str(conf_mat[1][0]) + " | " + str(conf_mat[1][1]) + " | " + str(conf_mat[1][0] + conf_mat[1][1]) ))
         print (str("        Total | " + str(conf_mat[0][0] + conf_mat[1][0]) + " | " + str(conf_mat[0][1] + conf_mat[1][1]) + " | " + str(len(data_temp)) ))
         print ()
-        print ("Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
+        print ("Housework Accuracy = ",sum(data_temp['coding'] == data_temp['predicted']) / len(data_temp['coding']))
+        print ()
 
         
 
@@ -129,17 +135,15 @@ def main(argv):
 
     # print_confusion_matrix(classifier, data)
     print_confusion_matrix(data, "overall")
-    print ()
     print_confusion_matrix(data, "a")
-    print ()
     print_confusion_matrix(data, "e")
-    print ()
     print_confusion_matrix(data, "w")
-    print ()
     print_confusion_matrix(data, "l")
-    print ()
     print_confusion_matrix(data, "h")
     
+    ## output to text file
+    f = open(output_file,'w')
+    f.write(print_confusion_matrix(data,"overall"))
 
 
 if __name__ == "__main__":
